@@ -1,0 +1,291 @@
+{
+  "_format": {
+    "about": "Edit this file to change everything the portfolio says. The page fetches it on load.",
+    "text": "**bold**  ~dim~  ^^accent^^  !!highlight!!  [label](https://link)  [label](/command)  [label](?Question to ask)  {email} {linkedin} {github} {years} {yearsWhole} placeholders (years are computed from profile.careerStart)",
+    "lines": "A line starting with '# ' is a section heading (gets space above). The line '@skills' renders the skill bars.",
+    "intents": "keywords: words/phrases that route a question here (end a word with * for prefix match, e.g. 'introduc*'). weight: higher wins ties. Use 'answer' for both modes, or 'recruiter' + 'engineer'. 'permission' asks before opening a link."
+  },
+
+  "profile": {
+    "name": "Smruti Ranjan Rana",
+    "title": "smruti-agent — ~/portfolio",
+    "agent": "smruti-agent",
+    "careerStart": "2021-01"
+  },
+
+  "contact": {
+    "email": "smrutiranjan.code@gmail.com",
+    "linkedin": "https://www.linkedin.com/in/heyitsranjan",
+    "github": "https://github.com/heyitsranjan",
+    "resume": "https://drive.google.com/file/d/1toLN_rt-gPZ73MJcpBV02P2bka5_QJ6d/view?usp=drive_link"
+  },
+
+  "skills": {
+    "frontend": { "level": 95, "items": ["React", "TypeScript", "Redux Toolkit", "Context API", "Tailwind", "HTML5/CSS3"] },
+    "arch":     { "level": 85, "items": ["Microfrontends", "Webpack", "Scalable FE architecture"] },
+    "quality":  { "level": 80, "items": ["Jest", "Unit testing", "Performance", "Web security", "Accessibility"] },
+    "backend":  { "level": 70, "items": ["Node.js", "Express", "REST APIs", "Docker", "CI/CD", "Git"] },
+    "genai":    { "level": 88, "items": ["LangGraph", "MCP servers", "RAG", "Multi-agent systems", "LLM integrations", "Evals"] }
+  },
+
+  "boot": {
+    "lines": [
+      "booting smruti-agent v{years} …",
+      "[ ok ] mounting react@ts",
+      "[ ok ] spawning agents (3/3)",
+      "[ ok ] connecting mcp servers",
+      "[ ok ] indexing résumé · {topics} topics"
+    ],
+    "banner": [
+      "███████╗███╗   ███╗██████╗ ██╗   ██╗████████╗██╗",
+      "██╔════╝████╗ ████║██╔══██╗██║   ██║╚══██╔══╝██║",
+      "███████╗██╔████╔██║██████╔╝██║   ██║   ██║   ██║",
+      "╚════██║██║╚██╔╝██║██╔══██╗██║   ██║   ██║   ██║",
+      "███████║██║ ╚═╝ ██║██║  ██║╚██████╔╝   ██║   ██║",
+      "╚══════╝╚═╝     ╚═╝╚═╝  ╚═╝ ╚═════╝    ╚═╝   ╚═╝"
+    ],
+    "welcome": "^^✻^^ Welcome to **smruti-agent** — Smruti Ranjan Rana's portfolio, as an agent.",
+    "tips": "~  ask anything in plain English · type / for commands · shift+tab switch mode · esc interrupt~",
+    "start": "/about"
+  },
+
+  "ui": {
+    "placeholder": "Ask anything about Smruti…  ( / for commands )",
+    "placeholderMobile": "Ask about Smruti…  ( / cmds )",
+    "chips": ["about", "experience", "ai", "skills", "projects", "contact", "resume", "theme", "bg", "sound", "help"],
+    "thinking": ["Thinking", "Recalling", "Grepping résumé", "Reading commits", "Consulting agents", "Pondering"]
+  },
+
+  "commands": {
+    "about":      { "intent": "about",      "desc": "who Smruti is" },
+    "experience": { "intent": "experience", "desc": "work history" },
+    "ai":         { "intent": "ai",         "desc": "agentic AI work" },
+    "skills":     { "intent": "skills",     "desc": "tech stack" },
+    "impact":     { "intent": "impact",     "desc": "measured results" },
+    "projects":   { "intent": "projects",   "desc": "side projects" },
+    "awards":     { "intent": "awards",     "desc": "hackathon wins" },
+    "education":  { "intent": "education",  "desc": "degree" },
+    "contact":    { "intent": "contact",    "desc": "email, LinkedIn, GitHub" },
+    "resume":     { "intent": "resume",     "desc": "open résumé (Google Drive)" }
+  },
+
+  "aliases": { "whoami": "about", "work": "experience", "exp": "experience", "cv": "resume", "email": "contact" },
+
+  "intents": {
+    "greet": {
+      "keywords": ["hi", "hello", "hey", "yo", "hola", "namaste", "sup"], "weight": 3,
+      "tool": "Think()", "meta": "friendly human detected",
+      "answer": ["Hey! 👋 I'm Smruti's portfolio agent. Ask me about his work, skills, AI projects, or how to reach him."],
+      "next": ["Who is Smruti?", "What AI work has he done?", "How do I contact him?"]
+    },
+
+    "about": {
+      "keywords": ["who", "about", "yourself", "introduc*", "bio", "summary", "overview", "profile"], "weight": 1,
+      "tool": "Read(about.md)", "meta": "profile loaded",
+      "recruiter": [
+        "Smruti is a Software Engineer (SDE II) at HackerRank in Bangalore with {years} years of experience.",
+        "Frontend-focused full-stack: React + TypeScript, with hands-on backend and Agentic AI — multi-agent systems and MCP.",
+        "~Recent impact:~ quality evaluation 2h → 15m · cost per question $200 → $30."
+      ],
+      "engineer": [
+        "SDE II @ HackerRank · {years} yrs · frontend-focused full-stack.",
+        "  core     React, TypeScript, Redux Toolkit, microfrontends, Webpack",
+        "  backend  Node.js, Express, REST, Docker, CI/CD",
+        "  ai       LangGraph, MCP servers, RAG, multi-agent systems, evals"
+      ],
+      "next": ["What AI work has he done?", "Show his experience", "Why should we hire him?"]
+    },
+
+    "experience": {
+      "keywords": ["experience", "work*", "job", "jobs", "career", "history", "hackerrank", "infosys", "role", "roles", "compan*", "years", "employ*"], "weight": 1,
+      "tool": "Bash(git log --career)", "meta": "2 roles · 8 highlights",
+      "recruiter": [
+        "**SDE II · HackerRank** ~· Feb 2026 – present~",
+        "  • Built an agentic question-creation workflow (via Slack): turnaround 8h → 2h, cost $200 → $30",
+        "  • Built a Quality Engine: evaluation time 2h → 15m (−87.5%)",
+        "  • UI for HackerRank's new ADE product for Interviews; LLM-as-a-Judge eval CLI",
+        "# **Specialist Programmer L2 · Infosys** ~· Jan 2021 – Feb 2026~",
+        "  • Migrated monoliths to microfrontends; built an internal React component library",
+        "  • Up to 17% faster load times; MCP/RAG/multi-agent apps lifted engagement 20%"
+      ],
+      "engineer": [
+        "!!commit a3f9e1c!! ~(HEAD → hackerrank)~",
+        "~Role:  SDE II · Feb 2026 → now~",
+        "    + ADE Interviews product UI — user-facing features & workflows",
+        "    + Quality Engine: deterministic + non-deterministic tests (2h → 15m)",
+        "    + Agentic question pipeline integrated with Slack (8h → 2h, $200 → $30)",
+        "    + LLM-as-a-Judge CLI validating skill I/O before deploy",
+        "# !!commit 7c1e0b8!! ~(infosys)~",
+        "~Role:  Specialist Programmer L2 (Frontend) · Jan 2021 → Feb 2026~",
+        "    + Monolith → microfrontend architecture",
+        "    + Internal React component library",
+        "    + Load time −17%: lazy loading, preloading, caching",
+        "    + MCP servers, RAG pipelines, multi-agent GenAI apps (+20% engagement)"
+      ],
+      "next": ["What AI work has he done?", "What are his biggest results?", "Any side projects?"]
+    },
+
+    "ai": {
+      "keywords": ["ai", "genai", "gen ai", "agent*", "llm*", "mcp", "rag", "langgraph", "eval*", "judge", "ml", "machine learning", "gpt", "openai", "prompt*"], "weight": 3,
+      "tool": "Grep(\"agent|llm|mcp|rag\", resume.md)", "meta": "6 matches across 2 roles",
+      "recruiter": [
+        "Agentic AI is a core strength — and he ships it to production:",
+        "  • Agentic question-creation workflow in Slack: turnaround −75% (8h → 2h), cost −85% ($200 → $30)",
+        "  • Quality Engine mixing deterministic + LLM tests: evaluation −87.5% (2h → 15m)",
+        "  • LLM-as-a-Judge CLI that validates skills before they deploy",
+        "  • At Infosys: MCP servers, RAG pipelines & multi-agent apps → +20% user engagement"
+      ],
+      "engineer": [
+        "  stack  LangGraph · MCP servers · RAG · multi-agent systems · LLM integrations · evals",
+        "  • Ideation → code-repo pipeline orchestrated by agents, triggered from Slack",
+        "  • Quality Engine: deterministic checks + non-deterministic (LLM) testing of repos & live questions",
+        "  • LLM-as-a-Judge eval CLI: scores skill inputs/outputs against expected behavior",
+        "  • Architected and deployed MCP servers and RAG pipelines (Infosys)"
+      ],
+      "next": ["What frontend work has he done?", "What are his biggest results?", "How do I contact him?"]
+    },
+
+    "frontend": {
+      "keywords": ["react", "frontend", "front-end", "front end", "typescript", "ts", "ui", "ux", "css", "html", "microfrontend", "microfrontends", "micro frontend", "webpack", "redux", "tailwind", "component*", "performance", "perf"], "weight": 2,
+      "tool": "Read(src/frontend/**)", "meta": "{years} yrs of commits",
+      "recruiter": [
+        "Frontend is home base — {yearsWhole}+ years of production React + TypeScript:",
+        "  • Migrated monolithic apps to a microfrontend architecture (scalability, modularity)",
+        "  • Built an internal React component library — more reuse, faster delivery",
+        "  • Up to 17% faster load times through lazy loading, preloading and caching",
+        "  • UI for HackerRank's new ADE product for Interviews"
+      ],
+      "engineer": [
+        "Frontend is home base — {yearsWhole}+ years of production React + TypeScript:",
+        "  • Migrated monolithic apps to a microfrontend architecture (scalability, modularity)",
+        "  • Built an internal React component library — more reuse, faster delivery",
+        "  • Up to 17% faster load times through lazy loading, preloading and caching",
+        "  • UI for HackerRank's new ADE product for Interviews",
+        "  ~stack: React · TypeScript · Redux Toolkit · Context API · Tailwind · Webpack · Jest — with care for a11y & web security~"
+      ],
+      "next": ["What AI work has he done?", "Show his skills", "Any side projects?"]
+    },
+
+    "skills": {
+      "keywords": ["skill", "skills", "stack", "tech*", "tool", "tools", "know", "language", "languages", "proficien*"], "weight": 1,
+      "tool": "Read(skills.json)", "meta": "5 categories · 26 skills",
+      "recruiter": [
+        "Top skills: **React, TypeScript, microfrontends, Agentic AI (LangGraph, MCP, RAG)**, plus Node.js and Docker.",
+        "~Switch to engineer mode (shift+tab) for the full breakdown.~"
+      ],
+      "engineer": ["@skills"],
+      "next": ["What AI work has he done?", "What frontend work has he done?", "Show his experience"]
+    },
+
+    "impact": {
+      "keywords": ["impact", "achiev*", "result", "results", "metric", "metrics", "number", "numbers", "sav*", "cost", "improv*", "biggest", "proud"], "weight": 2,
+      "tool": "Bash(jq .metrics resume.json)", "meta": "5 metrics",
+      "answer": [
+        "Measured results from his work:",
+        "  **−87.5%**  quality evaluation time      2h → 15m",
+        "  **−85%**    cost per question            $200 → $30",
+        "  **−75%**    question turnaround          8h → 2h",
+        "  **+20%**    user engagement (GenAI apps)",
+        "  **−17%**    web app load time"
+      ],
+      "next": ["How did he cut costs 85%?", "Why should we hire him?", "How do I contact him?"]
+    },
+
+    "cost": {
+      "keywords": ["85", "cut cost", "cut costs", "$200", "$30", "cheaper"], "weight": 3,
+      "tool": "Read(projects/question-agent.md)", "meta": "agentic workflow",
+      "answer": [
+        "He built an agentic question-creation workflow integrated with Slack. It automates the whole path — from ideation to creating the code repository.",
+        "  • Turnaround: 8 hours → 2 hours (−75%)",
+        "  • Cost per question: $200 → $30 (−85%)"
+      ],
+      "next": ["What AI work has he done?", "Show his experience"]
+    },
+
+    "projects": {
+      "keywords": ["project", "projects", "side", "built", "arogyam", "app", "apps", "scanner", "portfolio", "hobby"], "weight": 2,
+      "tool": "Read(projects/arogyam/README.md)", "meta": "React Native · OpenAI · ML Kit",
+      "answer": [
+        "**Arogyam — Ingredient Scanner** ~· React Native, OpenAI, Google ML Kit~",
+        "  • Health app using GenAI + OCR to analyze product ingredients and give personalized insights",
+        "  • Real-time scanner + recommendations that flag potentially harmful ingredients",
+        "  • Health data from prescriptions (image-to-text), ABDM records and manual input",
+        "  • Works offline for uninterrupted access to core features"
+      ],
+      "next": ["Any awards?", "What AI work has he done?", "Show his skills"]
+    },
+
+    "awards": {
+      "keywords": ["award", "awards", "hackathon", "hackathons", "medal", "medals", "won", "win*", "prize", "prizes", "competition*", "makeathon", "infyusion"], "weight": 2,
+      "tool": "Read(awards.md)", "meta": "2 podium finishes",
+      "answer": [
+        "  🥈 **Silver Medal — AI category, Infosys Infyusion 2025**",
+        "     Led a team building an AI cafeteria & nutrition-tracking app · 500+ teams",
+        "#   🏆 **1st Runner-Up — Infosys STG Makeathon 17**",
+        "     AI-based mobile app · beat 170+ teams and 1,000+ developers"
+      ],
+      "next": ["Any side projects?", "Why should we hire him?"]
+    },
+
+    "education": {
+      "keywords": ["educat*", "degree", "college", "universit*", "stud*", "cgpa", "gpa", "btech", "b.tech", "graduat*"], "weight": 2,
+      "tool": "Read(education.md)", "meta": "1 degree",
+      "answer": [
+        "**B.Tech, Computer Science & Engineering**",
+        "  Biju Patnaik University of Technology · 2016 – 2020 · CGPA 8.53 / 10"
+      ],
+      "next": ["Show his experience", "Show his skills"]
+    },
+
+    "hire": {
+      "keywords": ["hire", "hiring", "why him", "why smruti", "strength", "strengths", "good at", "best at", "fit", "should we", "recommend"], "weight": 2,
+      "tool": "Task(summarize strengths)", "meta": "agent finished · 3 reasons",
+      "answer": [
+        "Three reasons, all from his track record:",
+        "  1. **Ships AI that pays off** — his agentic pipeline cut cost per question 85% and turnaround 75%.",
+        "  2. **Deep frontend** — {yearsWhole}+ yrs React/TypeScript, microfrontend migrations, component libraries, perf wins.",
+        "  3. **Delivers under pressure** — Silver at Infyusion 2025 (500+ teams), 1st Runner-up at STG Makeathon 17."
+      ],
+      "next": ["How do I contact him?", "Download his résumé", "Show his experience"]
+    },
+
+    "location": {
+      "keywords": ["location", "based", "relocat*", "remote", "city", "country", "bangalore", "bengaluru", "india", "live", "lives", "where does he live", "where is he"], "weight": 2,
+      "tool": "Read(about.md)", "meta": "location",
+      "answer": [
+        "Based in Bangalore, Karnataka, India.",
+        "For remote or relocation questions, it's best to ask him directly → [contact](/contact)"
+      ],
+      "next": ["How do I contact him?"]
+    },
+
+    "contact": {
+      "keywords": ["contact", "email", "mail", "reach", "linkedin", "github", "connect", "call", "phone", "talk", "message"], "weight": 2,
+      "tool": "Read(contact.vcf)", "meta": "3 channels",
+      "answer": [
+        "Here's how to reach Smruti:",
+        "  email     [{email}](mailto:{email})",
+        "  linkedin  [linkedin.com/in/heyitsranjan]({linkedin})",
+        "  github    [github.com/heyitsranjan]({github})",
+        "  ~quick:~ [copy email](/copy email) · [download résumé](/resume)"
+      ],
+      "next": ["Download his résumé", "Why should we hire him?"]
+    },
+
+    "resume": {
+      "keywords": ["resume", "résumé", "cv", "pdf", "download"], "weight": 3,
+      "tool": "Bash(open resume --drive)", "meta": "needs your permission",
+      "permission": { "prompt": "Allow smruti-agent to open **Smruti's résumé** (Google Drive) in a new tab?", "open": "{resume}" },
+      "next": ["How do I contact him?", "Why should we hire him?"]
+    }
+  },
+
+  "fallback": {
+    "tool": "Grep(query, resume.md)", "meta": "no matches",
+    "answer": [
+      "I couldn't find that in Smruti's résumé — I only answer from real facts, so I won't guess.",
+      "Try one of the questions below, or ask him directly: [{email}](mailto:{email})"
+    ],
+    "next": ["Who is Smruti?", "What AI work has he done?", "Show his experience", "How do I contact him?"]
+  }
+}

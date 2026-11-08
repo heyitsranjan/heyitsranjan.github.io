@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Smruti Ranjan Rana — Software Engineer</title>
+<meta name="theme-color" content="#0a0e0a">
+<meta name="description" content="Smruti Ranjan Rana — SDE II at HackerRank. Frontend-focused full-stack engineer: React, TypeScript, multi-agent systems, MCP.">
+<meta property="og:title" content="Smruti Ranjan Rana — Software Engineer">
+<meta property="og:description" content="Ask my portfolio agent anything. React, TypeScript, Agentic AI.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' rx='3' fill='%230a0e0a'/><text x='2' y='12' font-size='10' fill='%2339ff88' font-family='monospace'>&gt;_</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0e0a;--win:#0d130d;--fg:#b8f5c4;--dim:#5c7d63;--acc:#39ff88;--warn:#ffd166;--link:#7cc7ff;--bar:#162016}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--fg);font:15px/1.55 'JetBrains Mono',monospace;min-height:100vh;display:grid;place-items:center;padding:16px;transition:background .3s}
+::selection{background:var(--acc);color:var(--bg)}
+.win{width:min(980px,100%);height:min(88vh,760px);background:var(--win);border:1px solid var(--bar);border-radius:12px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 30px 80px #0008;position:relative}
+/* CRT scanlines + glow, off in paper theme */
+.win::after{content:'';position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(transparent 0 2px,#0002 2px 3px)}
+.noscan .win::after{display:none}
+#bg{position:fixed;inset:0;width:100%;height:100%;z-index:-1;display:block}
+.bar select{font:inherit;background:var(--win);color:var(--fg);border:1px solid var(--dim);border-radius:4px;padding:2px 6px;cursor:pointer}
+.swatch{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:middle}
+.bar{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--bar);font-size:12px;color:var(--dim)}
+.bar i{width:12px;height:12px;border-radius:50%;background:#ff5f57}.bar i:nth-child(2){background:#febc2e}.bar i:nth-child(3){background:#28c840}
+.bar span{flex:1;text-align:center}
+.bar button{font:inherit;background:none;border:1px solid var(--dim);color:var(--fg);border-radius:4px;padding:2px 8px;cursor:pointer}
+#out{flex:1;overflow-y:auto;padding:16px 18px;text-shadow:0 0 6px color-mix(in srgb,var(--acc) 35%,transparent)}
+#out p{white-space:pre-wrap;word-break:break-word}
+.p{color:var(--acc)}.d{color:var(--dim)}.w{color:var(--warn)}
+a,.cmd{color:var(--link);text-decoration:underline dotted;cursor:pointer;background:none;border:0;font:inherit;padding:0}
+.ascii{display:block;white-space:pre;color:var(--acc);font-size:clamp(6px,1.4vw,13px);line-height:1.05;overflow:hidden}
+.bar-chart{display:inline-block;background:var(--acc);height:10px;vertical-align:middle;width:0;transition:width 1s}
+/* agent-cli pieces */
+/* rhythm: one blank line between turns, every agent line hangs off a 2ch gutter */
+#out{line-height:1.5}
+.q{margin-top:1.5em;color:var(--fg);font-weight:700}
+.q::before{content:'❯ ';color:var(--acc)}
+.ans{padding-left:2ch}
+.mk{text-indent:-2ch}
+.gap{margin-top:.75em}
+.fade{animation:fade .2s ease-out}
+.blink{animation:blink 1s steps(1) infinite}@keyframes blink{50%{opacity:0}}
+@keyframes fade{from{opacity:0}}
+.tool b{color:var(--acc);font-weight:700}
+.prompt{position:relative;display:flex;gap:1ch;align-items:center;padding:10px 18px;border-top:1px solid var(--bar)}
+#in{flex:1;background:none;border:0;outline:none;color:var(--fg);font:inherit;caret-color:var(--acc);min-width:0}
+#in::placeholder{color:var(--dim)}
+.menu{position:absolute;left:-1px;right:-1px;bottom:calc(100% + 6px);background:var(--win);border:1px solid var(--dim);border-radius:8px;padding:6px 0;max-height:280px;overflow:auto;display:none;z-index:5;box-shadow:0 10px 30px #0006}
+.menu.open{display:block}
+.menu div{padding:3px 14px;display:flex;gap:14px;cursor:pointer;white-space:nowrap}
+.menu div b{min-width:13ch;font-weight:400}
+.menu .on{background:var(--bar);color:var(--acc)}
+/* tmux-style status line */
+.status{display:flex;gap:14px;align-items:center;padding:3px 18px;font-size:12px;color:var(--dim);background:var(--bar);flex-wrap:wrap}
+.status button{font:inherit;background:none;border:0;color:var(--acc);cursor:pointer;padding:0}
+.status #st{margin-left:auto}
+/* whenever the side gutter is 16px (window narrower than 980 + 2×16), height matches it: visible height − 32px.
+   --vh is set from window.innerHeight in JS (works inside iframes / mobile browser bars); dvh is the fallback. */
+@media(max-width:1012px){body{min-height:var(--vh,100dvh)}.win{height:calc(100vh - 32px);height:calc(var(--vh,100dvh) - 32px)}}
+@media(max-width:600px){#in{font-size:16px}.status .kbd{display:none}.status #st{margin-left:0}.bar span{visibility:hidden}.bar-chart{max-width:40vw}}
+/* chips: discoverability for non-terminal people */
+.chips{display:flex;gap:6px;flex-wrap:wrap;padding:10px 14px;border-top:1px solid var(--bar);font-size:12px}
+.chips button{font:inherit;background:var(--bar);color:var(--fg);border:1px solid transparent;border-radius:4px;padding:4px 10px;cursor:pointer}
+.chips button:hover,.chips button:focus-visible{border-color:var(--acc);color:var(--acc);outline:none}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style></head><body>
+<canvas id="bg" aria-hidden="true"></canvas>
+<main class="win" aria-label="Interactive terminal portfolio">
+  <div class="bar"><i></i><i></i><i></i><span>smruti-agent — ~/portfolio</span><button id="snd" aria-label="Toggle sound" aria-pressed="false">♪ off</button><select id="theme" aria-label="Theme"></select></div>
+  <div id="out" role="log" aria-live="polite"></div>
+  <div class="prompt"><span class="p">❯</span><input id="in" aria-label="Ask a question or type / for commands" placeholder="Ask anything about Smruti…  ( / for commands )" autocomplete="off" spellcheck="false"><div class="menu" id="menu" role="listbox"></div></div>
+  <div class="status"><button id="mode" title="Switch mode (shift+tab)"></button><span class="kbd">shift+tab to switch</span><span id="st"></span></div>
+  <div class="chips" id="chips" aria-label="Quick commands"></div>
+</main>
+<noscript><style>.win{display:none}</style><article style="max-width:700px">
+<h1>Smruti Ranjan Rana</h1><p>SDE II @ HackerRank · building since 2021 · React, TypeScript, Agentic AI.</p>
+<p><a href="mailto:smrutiranjan.code@gmail.com">smrutiranjan.code@gmail.com</a> · <a href="https://www.linkedin.com/in/heyitsranjan">LinkedIn</a> · <a href="https://github.com/heyitsranjan">GitHub</a> · <a href="https://drive.google.com/file/d/1toLN_rt-gPZ73MJcpBV02P2bka5_QJ6d/view?usp=drive_link">Résumé</a></p></article></noscript>
+<script>
+// ── Background engine: canvas behind the terminal. Reacts to pointer, keystrokes (pulse 1) and commands (pulse 6).
+// Add a pattern = add an entry to `modes` with {d, init?, frame(dt)}.
+const BG=(()=>{
+  const cv=document.getElementById('bg'),x=cv.getContext('2d'),C={},m={x:-1e4,y:-1e4};
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let W=0,H=0,mode='ascii',t=0,last=0;
+  const rnd=(a,b)=>a+Math.random()*(b-a);
+  const colors=()=>{const s=getComputedStyle(document.documentElement);['acc','dim','fg','link','warn','bg'].forEach(k=>C[k]=s.getPropertyValue('--'+k).trim());if(reduce)draw(0)};
+  addEventListener('pointermove',e=>{m.x=e.clientX;m.y=e.clientY});
+  document.addEventListener('pointerleave',()=>{m.x=m.y=-1e4});
+
+  // 1. agent mesh — drifting nodes link up; commands fire signals that hop node→node
+  let nodes=[],sig=[];
+  const agents={d:'agent mesh · signals hop on each command',
+    init(){nodes=[...Array(Math.min(160,Math.round(W*H/10000)))].map(()=>({x:rnd(0,W),y:rnd(0,H),vx:rnd(-.2,.2),vy:rnd(-.2,.2)}));sig=[]},
+    pulse(n){if(nodes.length<2)return;for(let k=0;k<n*2;k++){const a=nodes[Math.random()*nodes.length|0];sig.push({a,b:near(a),p:0,ttl:8})}},
+    frame(){const R=150;
+      for(const n of nodes){n.x+=n.vx;n.y+=n.vy;if(n.x<0||n.x>W)n.vx*=-1;if(n.y<0||n.y>H)n.vy*=-1;
+        const dx=n.x-m.x,dy=n.y-m.y,d=Math.hypot(dx,dy);if(d<160){n.x+=dx/d*1.2;n.y+=dy/d*1.2}}
+      x.strokeStyle=C.dim;x.lineWidth=1;
+      for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j],d=Math.hypot(a.x-b.x,a.y-b.y);
+        if(d<R){x.globalAlpha=(1-d/R)*.7;x.beginPath();x.moveTo(a.x,a.y);x.lineTo(b.x,b.y);x.stroke()}}
+      x.fillStyle=C.acc;
+      for(const n of nodes){x.globalAlpha=.85;x.fillRect(n.x-2,n.y-2,4,4)}
+      x.shadowColor=C.acc;x.shadowBlur=12;
+      sig=sig.filter(s=>{s.p+=.045;if(s.p>=1){if(--s.ttl<=0)return false;s.a=s.b;s.b=near(s.a);s.p=0}
+        const px=s.a.x+(s.b.x-s.a.x)*s.p,py=s.a.y+(s.b.y-s.a.y)*s.p;
+        x.globalAlpha=.9;x.strokeStyle=C.acc;x.beginPath();x.moveTo(s.a.x,s.a.y);x.lineTo(px,py);x.stroke();
+        x.beginPath();x.arc(px,py,2.5,0,7);x.fill();return true});
+      x.shadowBlur=0}};
+  const near=a=>{let best=null,bd=1e9;for(let k=0;k<12;k++){const b=nodes[Math.random()*nodes.length|0],d=Math.hypot(a.x-b.x,a.y-b.y);if(b!==a&&d<bd&&d<220){bd=d;best=b}}return best||nodes[Math.random()*nodes.length|0]};
+
+  // 2. ascii tide — glyph interference field; pointer is a lens, keystrokes ripple out from the terminal
+  const G=' .·:-=+*#%@',S=16;let rip=[];
+  const ascii={d:'ascii tide · keystrokes ripple the glyphs',
+    init(){rip=[]},
+    pulse(n){rip.push({t,s:n>1?2:1})},
+    frame(){x.font='12px "JetBrains Mono",monospace';x.textAlign='center';x.textBaseline='middle';
+      const cx=W/2,cy=H/2;rip=rip.filter(r=>t-r.t<4);
+      for(let gy=S/2;gy<H;gy+=S)for(let gx=S/2;gx<W;gx+=S){
+        let v=(Math.sin(gx*.011+t*.6)+Math.sin(gy*.017-t*.45)+Math.sin((gx+gy)*.007+t*.3))/6+.5; // 0..1
+        v=Math.pow(v,1.4)*.7;
+        const dm=Math.hypot(gx-m.x,gy-m.y);if(dm<140)v+=(1-dm/140)*.6;
+        const dc=Math.hypot(gx-cx,gy-cy);
+        for(const r of rip){const rr=(t-r.t)*420,w=Math.abs(dc-rr);if(w<40)v+=(1-w/40)*.5*r.s*(1-(t-r.t)/4)}
+        v=Math.min(1,v);if(v<.08)continue;
+        x.globalAlpha=.35+v*.6;x.fillStyle=v>.5?C.acc:C.dim;x.fillText(G[Math.round(v*(G.length-1))],gx,gy)}}};
+
+  // 3. commit grid — contribution squares; pointer paints, typing "commits", idle waves sweep
+  const Q=18;let cells=[],cols=0,rows=0,wave=0;
+  const commits={d:'commit grid · paint it, typing commits',
+    init(){cols=Math.ceil(W/Q);rows=Math.ceil(H/Q);cells=new Float32Array(cols*rows).map(()=>Math.random()<.12?Math.random()*.5:0)},
+    pulse(n){for(let k=0;k<n*4;k++){const i=Math.random()*cells.length|0;cells[i]=1}},
+    frame(dt){wave+=dt*.25;const wf=(wave%1.6)*(cols+rows);
+      const mc=Math.floor(m.x/Q),mr=Math.floor(m.y/Q);
+      for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){const i=r*cols+c;
+        if(Math.abs(c-mc)<=1&&Math.abs(r-mr)<=1)cells[i]=Math.max(cells[i],c==mc&&r==mr?1:.6);
+        if(Math.abs(c+r-wf)<1&&Math.random()<.08)cells[i]=Math.max(cells[i],.5);
+        cells[i]*=.992;
+        const lv=Math.ceil(cells[i]*4)/4; // github-style 5 levels
+        x.globalAlpha=lv?.15+lv*.7:.07;x.fillStyle=lv?C.acc:C.dim;
+        x.beginPath();x.roundRect(c*Q+2,r*Q+2,Q-4,Q-4,3);x.fill()}}};
+
+  // 4. circuit — PCB traces route across a grid, turning at right angles; commands fire traces out from the terminal
+  const P=24;let tr=[];
+  const spawnTrace=(center,px,py)=>{const dirs=[[1,0],[-1,0],[0,1],[0,-1]],[dx,dy]=dirs[Math.random()*4|0];
+    const sx=px??(center?W/2:rnd(0,W)),sy=py??(center?H/2:rnd(0,H));
+    tr.push({x:Math.round(sx/P)*P,y:Math.round(sy/P)*P,dx,dy,life:rnd(60,220)|0,col:Math.random()<.25?'link':'acc'})};
+  const circuit={d:'circuit · traces route out on commands',trail:.018,
+    init(){tr=[];for(let k=0;k<24;k++)spawnTrace()},
+    pulse(n){for(let k=0;k<n*3;k++)spawnTrace(true)},
+    frame(){if(tr.length<28&&Math.random()<.2)spawnTrace();
+      if(m.x>0&&Math.random()<.04&&tr.length<40)spawnTrace(false,m.x,m.y);
+      x.lineWidth=2;x.lineCap='round';x.globalAlpha=.9;
+      tr=tr.filter(s=>{x.strokeStyle=x.fillStyle=C[s.col];
+        const nx=s.x+s.dx*3,ny=s.y+s.dy*3;x.beginPath();x.moveTo(s.x,s.y);x.lineTo(nx,ny);x.stroke();s.x=nx;s.y=ny;
+        if(s.x%P==0&&s.y%P==0&&Math.random()<.22){[s.dx,s.dy]=Math.random()<.5?[s.dy,-s.dx]:[-s.dy,s.dx]}
+        if(--s.life>0&&s.x>-P&&s.x<W+P&&s.y>-P&&s.y<H+P)return true;
+        x.beginPath();x.arc(s.x,s.y,4,0,7);x.stroke();return false})}};
+
+  // 5. orbit — your skills orbit the terminal like a solar system; pointer tilts the plane, commands spin it up
+  let ph=0,spin=0;
+  const orbit={d:'orbit · skills circle the terminal',
+    pulse(n){spin+=n*.12},
+    frame(dt){spin*=.96;ph+=dt*(.12+spin);
+      const words=typeof DATA!='undefined'&&DATA?.skills?Object.values(DATA.skills).flatMap(s=>s.items||[]):['React','TypeScript','MCP','RAG'];
+      // rings wrap around the terminal window, so words are visible in the margins
+      const cx=W/2,cy=H/2,tilt=.85+.3*(m.y>0?m.y/H-.5:0),rot=m.x>0?(m.x/W-.5)*.25:0;
+      const RX=r=>W*(.40+r*.07),RY=r=>H*(.44+r*.07)*tilt;
+      x.save();x.translate(cx,cy);x.rotate(rot);x.font='13px "JetBrains Mono",monospace';x.textAlign='center';x.textBaseline='middle';
+      for(let r=0;r<3;r++){x.globalAlpha=.45;x.strokeStyle=C.dim;x.lineWidth=1;x.setLineDash([2,6]);
+        x.beginPath();x.ellipse(0,0,RX(r),RY(r),0,0,7);x.stroke();x.setLineDash([])}
+      words.forEach((w,i)=>{const r=i%3,a=ph*(1.4-r*.35)*(r%2?-1:1)+i*2.399,px=Math.cos(a)*RX(r),py=Math.sin(a)*RY(r),z=(Math.cos(a*2)+1)/2;
+        x.globalAlpha=.5+z*.5;x.fillStyle=z>.5?C.acc:C.fg;x.shadowColor=C.acc;x.shadowBlur=z*10;
+        x.beginPath();x.arc(px,py-12,2.5+z*1.5,0,7);x.fill();x.fillText(w,px,py+4)});
+      x.shadowBlur=0;
+      x.restore()}};
+
+  // 6. flow — silky particle streams follow a drifting vector field; pointer is a vortex, typing gusts the wind
+  let fp=[],gust=0;
+  const flow={d:'flow · streams swirl around your pointer',trail:.025,
+    init(){fp=[...Array(Math.min(900,Math.round(W*H/2200)))].map(()=>({x:rnd(0,W),y:rnd(0,H),l:rnd(50,200)}))},
+    pulse(n){gust+=n*.4},
+    frame(){gust*=.95;x.lineWidth=1.2;
+      fp.forEach((p,i)=>{const a=(Math.sin(p.x*.0035+t*.15)+Math.cos(p.y*.004-t*.12))*Math.PI;let vx=Math.cos(a)*(1.1+gust),vy=Math.sin(a)*(1.1+gust);
+        const dx=p.x-m.x,dy=p.y-m.y,d=Math.hypot(dx,dy);if(d<170){const f=(1-d/170)*3;vx+=-dy/d*f;vy+=dx/d*f}
+        x.globalAlpha=.75;x.strokeStyle=i%4?C.acc:C.link;x.beginPath();x.moveTo(p.x,p.y);p.x+=vx;p.y+=vy;x.lineTo(p.x,p.y);x.stroke();
+        if(--p.l<0||p.x<0||p.x>W||p.y<0||p.y>H){p.x=rnd(0,W);p.y=rnd(0,H);p.l=rnd(50,200)}})}};
+
+  // 7. ridgeline — stacked terrain lines like a signal plot; typing makes it "speak", pointer raises a peak
+  let energy=0;
+  const ridge={d:'ridgeline · typing makes the peaks speak',
+    pulse(n){energy=Math.min(3,energy+n*.25)},
+    frame(dt){energy*=Math.pow(.25,dt);const gap=22,stepX=8;x.lineWidth=1.3;
+      for(let y0=gap*2,row=0;y0<H+gap;y0+=gap,row++){x.beginPath();
+        for(let xp=-stepX;xp<=W+stepX;xp+=stepX){
+          let h=(Math.sin(xp*.02+row*1.7+t)+Math.sin(xp*.045-t*1.3+row))*2;
+          h+=Math.pow(Math.max(0,Math.sin(xp*.006+row*.55+t*.25)),3)*(26+energy*28);
+          h+=Math.exp(-(((xp-m.x)/70)**2))*Math.exp(-(((y0-m.y)/110)**2))*55;
+          xp<0?x.moveTo(xp,y0-h):x.lineTo(xp,y0-h)}
+        x.lineTo(W+stepX,H);x.lineTo(-stepX,H);x.closePath();
+        x.globalAlpha=1;x.fillStyle=C.bg;x.fill();
+        x.globalAlpha=.35+.4*(row%5==0);x.strokeStyle=row%5==0?C.acc:C.dim;x.stroke()}}};
+
+  const modes={agents,ascii,commits,circuit,orbit,flow,ridgeline:ridge,off:{d:'no pattern · plain background',frame(){}}};
+  function size(){const dpr=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;cv.width=W*dpr;cv.height=H*dpr;x.setTransform(dpr,0,0,dpr,0,0);modes[mode].init?.();if(reduce)draw(0)}
+  // trail modes paint a translucent bg wash instead of clearing, so strokes fade like long exposure
+  function draw(dt){const tl=modes[mode].trail;x.globalAlpha=tl||1;if(tl){x.fillStyle=C.bg;x.fillRect(0,0,W,H)}else x.clearRect(0,0,W,H);x.globalAlpha=1;modes[mode].frame(dt)}
+  function loop(now){const dt=Math.min(.05,(now-last)/1000||0);last=now;if(!document.hidden){t+=dt;draw(dt)}requestAnimationFrame(loop)}
+  addEventListener('resize',size);
+  return{modes,colors,get mode(){return mode},
+    set(n){if(!modes[n])return;mode=n;x.clearRect(0,0,W,H);modes[n].init?.();if(reduce)draw(0);try{localStorage.bg=n}catch{}},
+    pulse(n){reduce||modes[mode].pulse?.(n)},
+    start(){try{if(modes[localStorage.bg])mode=localStorage.bg}catch{}colors();size();reduce?draw(0):requestAnimationFrame(loop)}};
+})();
+// ── Sound engine: every sound is synthesized with Web Audio (no files). Default: retro (starts after first user gesture).
+// Add a pack = add an entry to `S` with key/enter/move/err/boot functions.
+const SFX=(()=>{let ac,master,pack='retro',last='retro';
+  const ctx=()=>{if(!ac){ac=new(window.AudioContext||window.webkitAudioContext)();master=ac.createGain();master.gain.value=.4;master.connect(ac.destination)}
+    if(ac.state=='suspended')ac.resume();return ac};
+  const r=(a,b)=>a+Math.random()*(b-a);
+  function tone({f=440,type='sine',dur=.08,vol=.3,slide=0,at=0}){const a=ctx(),t=a.currentTime+at,o=a.createOscillator(),g=a.createGain();
+    o.type=type;o.frequency.setValueAtTime(f,t);if(slide)o.frequency.exponentialRampToValueAtTime(Math.max(30,f+slide),t+dur);
+    g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(g).connect(master);o.start(t);o.stop(t+dur+.02)}
+  function noise({dur=.03,vol=.3,hp=2000,at=0}){const a=ctx(),t=a.currentTime+at,b=a.createBuffer(1,Math.ceil(a.sampleRate*dur),a.sampleRate),d=b.getChannelData(0);
+    for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*(1-i/d.length)**3;
+    const s=a.createBufferSource(),f=a.createBiquadFilter(),g=a.createGain();s.buffer=b;f.type='highpass';f.frequency.value=hp;g.gain.value=vol;
+    s.connect(f).connect(g).connect(master);s.start(t)}
+  const S={
+    mech:{d:'mechanical keyboard · thocky clicks',
+      key:()=>{noise({dur:.025,vol:.5,hp:r(1800,3200)});tone({f:r(140,190),type:'triangle',dur:.04,vol:.15})},
+      enter:()=>{noise({dur:.05,vol:.6,hp:900});tone({f:90,type:'triangle',dur:.09,vol:.28})},
+      move:()=>noise({dur:.015,vol:.35,hp:4000}),
+      err:()=>{tone({f:110,type:'square',dur:.09,vol:.07});tone({f:110,type:'square',dur:.09,vol:.07,at:.12})},
+      boot:()=>[440,660,880].forEach((f,i)=>tone({f,dur:.12,vol:.12,at:i*.08}))},
+    soft:{d:'soft bubbles · gentle pops',
+      key:()=>tone({f:r(500,700),dur:.06,vol:.12,slide:300}),
+      enter:()=>tone({f:350,dur:.16,vol:.18,slide:-150}),
+      move:()=>tone({f:880,dur:.04,vol:.08}),
+      err:()=>tone({f:220,dur:.28,vol:.15,slide:-100}),
+      boot:()=>[523,659,784,1047].forEach((f,i)=>tone({f,dur:.3,vol:.1,at:i*.09}))},
+    retro:{d:'8-bit · chiptune blips',
+      key:()=>tone({f:r(600,900),type:'square',dur:.03,vol:.06}),
+      enter:()=>{tone({f:440,type:'square',dur:.06,vol:.07});tone({f:880,type:'square',dur:.08,vol:.07,at:.06})},
+      move:()=>tone({f:1200,type:'square',dur:.025,vol:.05}),
+      err:()=>tone({f:200,type:'sawtooth',dur:.25,vol:.07,slide:-120}),
+      boot:()=>[262,330,392,523,659].forEach((f,i)=>tone({f,type:'square',dur:.08,vol:.06,at:i*.07}))}
+  };
+  const packs={off:{d:'silent'},...S};
+  // browsers refuse audio before the first user gesture; skip quietly instead of warning
+  const allowed=()=>!navigator.userActivation||navigator.userActivation.hasBeenActive;
+  const btn=()=>{const b=document.getElementById('snd');if(b){b.textContent=pack=='off'?'♪ off':'♪ '+pack;b.setAttribute('aria-pressed',pack!='off')}};
+  return{packs,get pack(){return pack},
+    set(n){if(!packs[n])return;pack=n;if(n!='off')last=n;try{localStorage.sound=n}catch{}btn();this.play('boot')},
+    toggle(){this.set(pack=='off'?last:'off')},
+    play(e){if(pack=='off'||!allowed())return;try{S[pack][e]?.()}catch{}},
+    init(){try{if(packs[localStorage.sound])pack=localStorage.sound;if(S[pack])last=pack}catch{}btn()}};
+})();
+</script>
+<script>
+// ════════ content: single source of truth, everything below renders from it ════════
+// ════════ content lives in data.json (fetched at boot) — edit that file, not this code ════════
+let DATA=null,I={},FALLBACK=null,L={},VERBS=['Thinking'];
+const out=document.getElementById('out'),inp=document.getElementById('in'),menu=document.getElementById('menu');
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const say=(html,cls='')=>{const p=document.createElement('p');p.className=cls;p.innerHTML=html;out.append(p);out.scrollTop=out.scrollHeight;return p};
+const c=(n,label=n)=>`<button class="cmd" data-run="${esc(n)}">${esc(label)}</button>`;
+const fast=matchMedia('(prefers-reduced-motion:reduce)').matches;
+const wait=ms=>new Promise(r=>setTimeout(r,fast?0:ms));
+const plain=html=>{const t=document.createElement('span');t.innerHTML=html;return t.textContent};
+
+// experience from profile.careerStart ("YYYY-MM") to today, rounded DOWN (never overstates): Jan 2021 → Nov 2026 = 5.8
+function career(){const m=/^(\d{4})-(\d{1,2})/.exec(DATA?.profile?.careerStart||'');if(!m)return null;
+  const now=new Date(),months=Math.max(0,(now.getFullYear()-+m[1])*12+(now.getMonth()+1-+m[2]));
+  return {years:(Math.floor(months/12*10)/10).toFixed(1),yearsWhole:Math.floor(months/12)}}
+// {email} {linkedin} {github} {resume} … come from data.contact; {years} {yearsWhole} from careerStart; {topics} = number of intents
+const fill=s=>String(s).replace(/\{(\w+)\}/g,(m,k)=>{if(k in L)return L[k];if(k=='topics')return Object.keys(I).length;
+  const cr=(k=='years'||k=='yearsWhole')&&career();return cr?cr[k]:m});
+// only http(s), mailto and plain relative file paths may become links
+const safeUrl=u=>/^(https?:\/\/|mailto:)/i.test(u)||/^[\w.\-\/]+$/.test(u);
+// tiny markup → HTML. Text is escaped FIRST, so data.json can never inject markup or scripts.
+function md(s){return esc(fill(s))
+  .replace(/\*\*(.+?)\*\*/g,'<b>$1</b>')
+  .replace(/\^\^(.+?)\^\^/g,'<span class="p">$1</span>')
+  .replace(/!!(.+?)!!/g,'<span class="w">$1</span>')
+  .replace(/~(.+?)~/g,'<span class="d">$1</span>')
+  .replace(/\[([^\]]+)\]\(([^)]+)\)/g,(m,label,u)=>{
+    if(u.startsWith('/'))return `<button class="cmd" data-run="${u}">${label}</button>`;
+    if(u.startsWith('?'))return `<button class="cmd" data-run="${u.slice(1)}">${label}</button>`;
+    const raw=u.replace(/&amp;/g,'&');
+    return safeUrl(raw)?`<a href="${u}"${/^https?:/i.test(raw)?' target="_blank" rel="noopener"':''}>${label}</a>`:label})}
+
+// keywords → one regex. "word*" = prefix match. Boundaries also work for "$200", "b.tech", "85%".
+function compile(kws){const alt=(kws||[]).map(k=>String(k).toLowerCase().split('*').map(p=>p.replace(/[.+?^${}()|[\]\\\/]/g,'\\$&')).join('\\w*'));
+  return alt.length?new RegExp(`(?<![\\w$])(?:${alt.join('|')})(?!\\w)`,'g'):null}
+
+// mode: recruiter (impact first) / engineer (stack & detail)
+let mode='recruiter';try{if(['recruiter','engineer'].includes(localStorage.mode))mode=localStorage.mode}catch{}
+const setMode=m=>{mode=m;try{localStorage.mode=m}catch{}status()};
+
+const skillLines=()=>Object.entries(DATA.skills||{}).map(([k,s])=>{const lv=Math.max(0,Math.min(100,+s.level||0));
+  return {gap:false,html:`  ${esc(k.padEnd(9))} <span class="bar-chart" data-w="${lv*2}"></span> ${lv}%\n            <span class="d">${esc((s.items||[]).join(' · '))}</span>`}});
+// an intent's lines for the current mode → [{html, gap}]; "# " = section heading, "@skills" = bars
+const linesFor=it=>(it.answer||it[mode]||it.recruiter||it.engineer||[]).flatMap(l=>l=='@skills'?skillLines():
+  [{gap:l.startsWith('# '),html:md(l.replace(/^# /,''))}]);
+
+// pick the intent whose keywords match most (weighted); ties go to the earlier intent
+function route(q){const s=q.toLowerCase();let best=null,score=0;
+  for(const it of Object.values(I)){if(!it.re)continue;const sc=(s.match(it.re)||[]).length*it.w;if(sc>score){score=sc;best=it}}
+  return best||FALLBACK}
+
+// ════════ agent loop: thinking spinner → tool call → streamed answer → follow-ups ════════
+let job=null;
+const SPIN=['·','✢','✳','✶','✻','✽','✻','✶','✳','✢'];
+async function respond(it){
+  const tok={dead:false};job=tok;const t0=performance.now();
+  const sp=say('','d ans mk gap');let f=0;const verb=VERBS[Math.random()*VERBS.length|0];
+  const tick=()=>{sp.innerHTML=`<span class="p">${SPIN[f++%SPIN.length]}</span> ${verb}… <span class="d">(${((performance.now()-t0)/1000).toFixed(1)}s · esc to interrupt)</span>`};
+  tick();const iv=setInterval(tick,90);tok.stop=()=>{clearInterval(iv);sp.remove()};
+  await wait(650+Math.random()*600);if(tok.dead)return;tok.stop();
+  const tool=fill(it.tool||'Think()'),paren=tool.indexOf('(');
+  say(`<span class="p">⏺</span> <span class="tool"><b>${esc(paren<0?tool:tool.slice(0,paren))}</b>${esc(paren<0?'':tool.slice(paren))}</span>`,'ans mk gap fade');
+  if(it.meta)say(`<span class="d">⎿  ${esc(fill(it.meta))}</span>`,'ans fade');
+  await wait(260);if(tok.dead)return;
+  if(it.permission){job=null;return permit(it)}
+  const lines=linesFor(it);if(!lines.length){job=null;return it.next&&followUps(it.next)}
+  // first line types out character by character; the rest stream in line by line
+  const first=say('<span class="p">⏺</span> ','ans mk gap fade'),txt=plain(lines[0].html);
+  const holder=document.createElement('span');first.append(holder);
+  for(let i=0;i<txt.length&&!fast;i+=3){if(tok.dead)return;holder.textContent=txt.slice(0,i+3);out.scrollTop=out.scrollHeight;if(i%9==0)SFX.play('key');await wait(14)}
+  const bars=el=>el.querySelectorAll('[data-w]').forEach(b=>setTimeout(()=>b.style.width=b.dataset.w+'px',30));
+  if(tok.dead)return;holder.innerHTML=lines[0].html;bars(first);
+  // "# " heading lines open a new section → breathing room above them
+  for(const l of lines.slice(1)){await wait(70);if(tok.dead)return;bars(say(l.html,l.gap?'ans gap fade':'ans fade'))}
+  job=null;if(it.next)followUps(it.next)}
+function interrupt(silent){if(!job)return;job.dead=true;job.stop?.();job=null;if(!silent){SFX.play('err');say('  ⎿  <span class="w">Interrupted</span> <span class="d">· what should I do instead?</span>')}}
+
+// ════════ pickers: one component for theme / bg / sound / follow-ups / permissions ════════
+// opts: {title, label(k), pre(k), apply(k) live preview, onPick(k), revert}
+let picker=null;
+function openPicker(keys,cur,opts){closePicker();picker={keys,i:Math.max(0,keys.indexOf(cur)),orig:cur,o:opts,el:say('','ans gap fade')};drawPicker()}
+function drawPicker(){const p=picker;if(!p)return;const o=p.o;
+  p.el.innerHTML=`<span class="p">?</span> ${o.title} <span class="d">(↑↓ move · enter select · esc ${o.apply?'cancel':'dismiss'})</span>\n`+
+    p.keys.map((k,j)=>{const on=j==p.i;return `${on?'<span class="p">❯</span>':' '} <button class="cmd" data-pick="${j}" style="text-align:left;${o.apply?'min-width:10ch;':''}${on?'color:var(--acc);text-decoration:none;font-weight:700':''}">${esc(o.label?o.label(k,j):k)}</button> ${o.pre?o.pre(k):''}${k==p.orig&&o.apply?'<span class="d">(current)</span>':''}`}).join('\n');
+  o.apply?.(p.keys[p.i]);out.scrollTop=out.scrollHeight}
+function closePicker(summary){if(!picker)return;const p=picker;picker=null;
+  if(summary)p.el.innerHTML=`<span class="p">✔</span> ${summary}`;else if(p.o.apply)p.el.innerHTML=`<span class="p">✔</span> ${p.o.title} <span class="d">·</span> ${p.keys[p.i]}`;else p.el.remove()}
+function pick(){const p=picker,k=p.keys[p.i];if(p.o.onPick){p.o.onPick(k,p)}else{closePicker();say(`  ⎿  <span class="d">${p.o.name} → ${k}</span>`)}}
+function pickerKey(e){const p=picker,n=p.keys.length;
+  if(e.key=='ArrowDown'||e.key=='Tab'){p.i=(p.i+1)%n;drawPicker()}
+  else if(e.key=='ArrowUp'){p.i=(p.i-1+n)%n;drawPicker()}
+  else if(/^[1-9]$/.test(e.key)&&+e.key<=n){p.i=+e.key-1;drawPicker();pick()}
+  else if(e.key=='Enter')pick();
+  else if(e.key=='Escape'){if(p.o.apply){p.i=Math.max(0,p.keys.indexOf(p.orig));p.o.apply(p.orig);closePicker();say('  ⎿  <span class="d">cancelled</span>')}else closePicker()}
+  else return false;e.preventDefault();return true}
+const followUps=qs=>openPicker(qs,null,{title:'Suggested next',label:(k,j)=>`${j+1}. ${k}`,onPick:k=>{closePicker();run(k)}});
+// "permission": {prompt, open} → Yes/No prompt before opening a link (only safe URLs are opened)
+function permit(it){const q=md(it.permission.prompt||'Open this link?'),url=fill(it.permission.open||'');
+  openPicker(['Yes','No'],'Yes',{title:q,label:(k,j)=>`${j+1}. ${k}`,onPick:k=>{closePicker(`${esc(plain(q))} <span class="d">·</span> ${k}`);
+    if(k=='Yes'&&safeUrl(url)){open(url,'_blank','noopener');say('  ⎿  <span class="d">opened in a new tab</span>')}
+    else say(`  ⎿  <span class="d">${k=='Yes'?'that link is not allowed':'ok, not opening it'}</span>`);
+    if(it.next)followUps(it.next)}})}
+
+// ════════ settings: themes ════════
+const THEMES={
+  matrix:   {bg:'#0a0e0a',win:'#0d130d',fg:'#b8f5c4',dim:'#5c7d63',acc:'#39ff88',warn:'#ffd166',link:'#7cc7ff',bar:'#162016'},
+  amber:    {bg:'#0e0a05',win:'#120d06',fg:'#ffd9a0',dim:'#8a6a3c',acc:'#ffb000',warn:'#ff6b6b',link:'#ffe08a',bar:'#1f170b'},
+  dracula:  {bg:'#1e1f29',win:'#282a36',fg:'#f8f8f2',dim:'#6272a4',acc:'#bd93f9',warn:'#ffb86c',link:'#8be9fd',bar:'#343746'},
+  nord:     {bg:'#242933',win:'#2e3440',fg:'#e5e9f0',dim:'#7b88a1',acc:'#88c0d0',warn:'#ebcb8b',link:'#81a1c1',bar:'#3b4252'},
+  synthwave:{bg:'#160f2b',win:'#1f1637',fg:'#f4e8ff',dim:'#8d78b8',acc:'#ff4fd8',warn:'#ffe66d',link:'#36f9f6',bar:'#2b1f4a'},
+  ocean:    {bg:'#06141f',win:'#0a1c2b',fg:'#cfe8ff',dim:'#5a7a94',acc:'#2fd5ff',warn:'#ffb454',link:'#7ee0c3',bar:'#10283b'},
+  solarized:{bg:'#eee8d5',win:'#fdf6e3',fg:'#586e75',dim:'#93a1a1',acc:'#2aa198',warn:'#cb4b16',link:'#268bd2',bar:'#e4ddc8',scan:false},
+  paper:    {bg:'#e9e6dc',win:'#f8f6ef',fg:'#2b2b2b',dim:'#8b877b',acc:'#0a7d3b',warn:'#b45309',link:'#1d4ed8',bar:'#dcd8cc',scan:false}
+};
+let curTheme='matrix';const sel=document.getElementById('theme');
+sel.innerHTML=Object.keys(THEMES).map(k=>`<option>${k}</option>`).join('');
+sel.onchange=()=>{run('/theme '+sel.value);inp.focus()};
+function setTheme(n){const t=THEMES[n];curTheme=n;sel.value=n;
+  ['bg','win','fg','dim','acc','warn','link','bar'].forEach(k=>document.documentElement.style.setProperty('--'+k,t[k]));
+  document.body.classList.toggle('noscan',t.scan===false);document.querySelector('meta[name=theme-color]')?.setAttribute('content',t.bg);
+  try{localStorage.theme=n}catch{}BG.colors();status()}
+const setBg=n=>{BG.set(n);status()},setSound=n=>{SFX.set(n);status()};
+function status(){document.getElementById('mode').textContent=`◆ ${mode} mode`;
+  document.getElementById('st').textContent=`${curTheme} · bg ${BG.mode} · ♪ ${SFX.pack}`}
+const setting=(name,map,cur,apply,pre)=>a=>{
+  if(!a)return openPicker(Object.keys(map),cur(),{title:`select ${name}`,name,apply,pre});
+  if(a=='random'&&name=='theme')a=Object.keys(map)[Math.random()*Object.keys(map).length|0];
+  if(!map[a])return say(`  ⎿  <span class="w">unknown ${name} '${esc(a)}'</span> · run ${c('/'+name)} to list`);
+  closePicker();apply(a);say(`  ⎿  <span class="d">${name} → ${a}</span>`)};
+
+// ════════ slash commands. Content commands (/about, /experience …) are added from data.json "commands";
+// these built-ins are app settings. Add one = add a key ({d, f, args?, hide?}) ════════
+const HELP={help:{d:'show commands & tips',f:()=>{say(`Ask anything in plain English — or use a command:`);
+    Object.entries(CMD).filter(([,v])=>!v.hide).forEach(([k,v])=>say(`  ${c('/'+k,('/'+k).padEnd(12))} <span class="d">${esc(v.d)}</span>`));
+    say(`<span class="d">  shift+tab switch mode · ↑↓ history · esc interrupt · ctrl+l clear</span>`)}}};
+let CMD={...HELP,
+  copy:{d:'copy email to clipboard',hide:true,args:true,f:()=>navigator.clipboard?.writeText(L.email).then(()=>say('  ⎿  <span class="p">✓ email copied</span>'),()=>say('  ⎿  <span class="w">clipboard blocked — select the email above</span>'))},
+  mode:{d:'recruiter ↔ engineer answers',args:true,f:a=>{const m=['recruiter','engineer'].includes(a)?a:(mode=='recruiter'?'engineer':'recruiter');setMode(m);
+    say(`  ⎿  <span class="d">mode → ${m} · ${m=='recruiter'?'short, impact-first answers':'stack details & technical depth'}</span>`)}},
+  theme:{d:'color theme',args:true,f:setting('theme',THEMES,()=>curTheme,setTheme,k=>`<span class="swatch" style="background:${THEMES[k].bg};outline:2px solid ${THEMES[k].acc}"></span>`)},
+  bg:{d:'background pattern',args:true,f:setting('bg',BG.modes,()=>BG.mode,setBg,k=>`<span class="d">${BG.modes[k].d}</span>`)},
+  sound:{d:'sound effects',args:true,f:setting('sound',SFX.packs,()=>SFX.pack,setSound,k=>`<span class="d">${SFX.packs[k].d}</span>`)},
+  mute:{d:'turn sound off',f:()=>{setSound('off');say('  ⎿  <span class="d">sound → off</span>')}},
+  clear:{d:'clear the conversation',f:()=>{out.innerHTML=''}},
+  sudo:{d:'',hide:true,f:()=>say('  ⎿  <span class="w">permission granted only to recruiters 😉</span>')}
+};
+const ALIAS={cls:'clear','?':'help',ls:'help'};
+// apply data.json: intents, fallback, content commands, aliases and UI text
+function load(d){DATA=d;L=d.contact||{};
+  I={};for(const[k,it]of Object.entries(d.intents||{}))I[k]={...it,re:compile(it.keywords),w:+it.weight||1};
+  FALLBACK=d.fallback||{tool:'Grep(query)',meta:'no matches',answer:["I couldn't find that."]};
+  const content={};for(const[k,v]of Object.entries(d.commands||{}))
+    content[k.toLowerCase()]={d:v.desc||'',f:()=>I[v.intent]?respond(I[v.intent]):say(`  ⎿  <span class="w">no intent '${esc(v.intent)}' in data.json</span>`)};
+  const{help,...builtins}=CMD;CMD={help,...content,...builtins};   // help first, then content, then settings
+  Object.assign(ALIAS,d.aliases||{});
+  const ui=d.ui||{};VERBS=ui.thinking?.length?ui.thinking:VERBS;
+  inp.placeholder=(matchMedia('(max-width:600px)').matches&&ui.placeholderMobile)||ui.placeholder||inp.placeholder;
+  if(d.profile?.title)document.querySelector('.bar span').textContent=d.profile.title;
+  document.getElementById('chips').innerHTML=(ui.chips||[]).filter(k=>CMD[k]).map(k=>`<button data-run="/${esc(k)}">/${esc(k)}</button>`).join('')}
+
+// ════════ input: plain question → agent; "/cmd" (or a bare command word) → command ════════
+const hist=[];let hi=0;
+function run(raw){const v=raw.trim();if(!v)return;
+  interrupt(true);closePicker();hideMenu();hist.push(v);hi=hist.length;BG.pulse(6);
+  say(esc(v),'q');
+  const slash=v.startsWith('/'),[w,...rest]=v.replace(/^\//,'').split(/\s+/),k=ALIAS[w.toLowerCase()]||w.toLowerCase(),a=rest.join(' ');
+  if(CMD[k]&&(slash||!a||CMD[k].args)){SFX.play('enter');return CMD[k].f(a)}
+  if(slash){SFX.play('err');return say(`  ⎿  <span class="w">unknown command /${esc(w)}</span> · type ${c('/help')} or just ask a question`)}
+  SFX.play('enter');respond(route(v))}
+
+// slash menu: type "/" to browse commands, filters as you type
+let mi=0,mlist=[];
+function showMenu(){const f=inp.value.slice(1).toLowerCase();mlist=Object.keys(CMD).filter(k=>!CMD[k].hide&&k.startsWith(f.split(' ')[0])&&!f.includes(' '));
+  if(!mlist.length)return hideMenu();mi=Math.min(mi,mlist.length-1);
+  menu.innerHTML=mlist.map((k,j)=>`<div class="${j==mi?'on':''}" data-run="/${k}" role="option"><b>/${k}</b><span class="d">${CMD[k].d}</span></div>`).join('');
+  menu.classList.add('open');menu.querySelector('.on')?.scrollIntoView({block:'nearest'})}
+function hideMenu(){menu.classList.remove('open');mi=0}
+inp.oninput=()=>{inp.value.startsWith('/')?showMenu():hideMenu()};
+inp.onkeydown=e=>{
+  if(e.key.length==1){BG.pulse(1)}
+  if(e.key.length==1||e.key=='Backspace')SFX.play('key');else if(/^Arrow|^Tab$/.test(e.key))SFX.play('move');
+  if(e.key=='Tab'&&e.shiftKey){e.preventDefault();return CMD.mode.f('')}
+  if(e.key=='Escape'&&job){e.preventDefault();return interrupt()}
+  if(menu.classList.contains('open')){
+    if(e.key=='ArrowDown'||e.key=='ArrowUp'){e.preventDefault();mi=(mi+(e.key=='ArrowDown'?1:-1)+mlist.length)%mlist.length;return showMenu()}
+    if(e.key=='Tab'){e.preventDefault();inp.value='/'+mlist[mi]+' ';return hideMenu()}
+    if(e.key=='Enter'){e.preventDefault();const v=inp.value.trim()=='/'+mlist[mi]||!inp.value.includes(' ')?'/'+mlist[mi]:inp.value;inp.value='';return run(v)}
+    if(e.key=='Escape'){e.preventDefault();return hideMenu()}}
+  if(picker&&!inp.value&&pickerKey(e))return;
+  if(e.key=='Enter'){e.preventDefault();const v=inp.value;inp.value='';run(v)}
+  else if(e.key=='ArrowUp'&&hist.length){e.preventDefault();inp.value=hist[hi=Math.max(0,hi-1)]}
+  else if(e.key=='ArrowDown'&&hist.length){e.preventDefault();hi=Math.min(hist.length,hi+1);inp.value=hist[hi]||''}
+  else if(e.key=='l'&&e.ctrlKey){e.preventDefault();CMD.clear.f()}};
+// clicks: commands, picker options and the status bar all hand focus straight back to the input
+document.addEventListener('click',e=>{
+  const pk=e.target.closest('[data-pick]');if(pk&&picker){picker.i=+pk.dataset.pick;drawPicker();pick();return inp.focus({preventScroll:true})}
+  const b=e.target.closest('[data-run]');if(b){run(b.dataset.run);return inp.focus({preventScroll:true})}
+  if(!getSelection().toString()&&!e.target.closest('a,button,select,option,input'))inp.focus()});
+document.getElementById('mode').onclick=()=>{CMD.mode.f('');inp.focus()};
+
+// ════════ boot ════════
+try{const s=localStorage.theme;if(THEMES[s])setTheme(s)}catch{}
+BG.start();SFX.init();status();
+const fitVh=()=>document.documentElement.style.setProperty('--vh',innerHeight+'px');fitVh();
+addEventListener('resize',fitVh);visualViewport?.addEventListener('resize',fitVh);
+document.getElementById('snd').onclick=()=>{SFX.toggle();status();say(`  ⎿  <span class="d">sound → ${SFX.pack}</span>`);inp.focus()};
+// data.json is the "API": fetched fresh on every load (no-cache), so edits show up on the next reload
+(async()=>{
+  say('booting smruti-agent …','d');
+  let d;
+  try{const r=await fetch('data.json',{cache:'no-cache'});if(!r.ok)throw new Error(`HTTP ${r.status}`);d=await r.json()}
+  catch(e){say(`<span class="w">✗ could not load data.json</span> <span class="d">— ${esc(e.message)}</span>`,'gap');
+    say(`<span class="d">  check the file is next to index.html and is valid JSON. Opening the page straight from disk (file://) blocks this — serve it over http, e.g. "python3 -m http.server".</span>`);
+    return}
+  load(d);out.innerHTML='';const b=d.boot||{};
+  for(const l of b.lines||[]){say(md(l),'d');await wait(160)}
+  if(b.banner?.length)say(`<span class="ascii">${esc(b.banner.join('\n'))}</span>`,'gap');
+  if(b.welcome)say(md(b.welcome),'gap');
+  if(b.tips)say(md(b.tips));
+  await wait(300);if(b.start)run(b.start)})();
+inp.focus();
+</script></body></html>
