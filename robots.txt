@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://heyitsranjan.github.io/sitemap.xml
